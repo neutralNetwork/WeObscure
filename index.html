@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<style>
+
+html {
+	background: black;
+	color: white;
+}
+
+textarea {
+	color: inherit;
+	background: transparent;
+}
+
+.output {
+	white-space: pre-wrap;
+	font-family: monospace;
+}
+
+textarea {
+	width: 500px;
+	height: 200px;
+
+</style>
+<script src="otr/build/dep/bigint.js"></script>
+<script src="otr/build/dep/crypto.js"></script>
+<script src="otr/build/dep/eventemitter.js"></script>
+<script src="otr/build/otr.min.js"></script>
+<h1>WeSecure</h1>
+
+<button type=button id=initButton>Init</button>
+
+<h2>Send</h2>
+<textarea id=outgoingMessage></textarea><br>
+<button type=button id=sendButton>Send</button>
+<div class=output id=encrypted></div>
+
+<h2>Receive</h2>
+<textarea id=incomingMessage></textarea><br>
+<button type=button id=receiveButton>Receive</button>
+<div class=output id=decrypted></div>
+
+<script>
+
+var key = (function(){
+	var keyString = sessionStorage.privateKey;
+	if (keyString) { return DSA.parsePrivate(keyString); }
+	var key = new DSA;
+	sessionStorage.privateKey = key.packPrivate();
+	return key;
+})();
+
+var otr = new OTR({
+	fragment_size: 140,
+	send_interval: 200,
+	priv: key
+});
+
+otr.REQUIRE_ENCRYPTION = true;
+
+otr.on('ui', function(msg, encrypted, meta) {
+	decrypted.textContent = msg;
+});
+
+otr.on('io', function(msg, meta) {
+	console.log(msg);
+	encrypted.textContent = msg;
+});
+
+otr.on('error', function (err, severity) {
+	console.log('something bad:', err, severity);
+});
+
+initButton.addEventListener('click', function(e) {
+	otr.sendQueryMsg();
+});
+
+sendButton.addEventListener('click', function(e) {
+	otr.sendMsg(outgoingMessage.value);
+});
+
+receiveButton.addEventListener('click', function(e) {
+	otr.receiveMsg(incomingMessage.value);
+});
+
+</script>

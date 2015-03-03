@@ -13,11 +13,13 @@ var init_buddy = function(ks) {
     var options = {
         fragment_size: 2000
       , send_interval: 200
-      //, SEND_WHITESPACE_TAG: true
       , debug: true
       , priv: key
     }
     var buddy = new otr.OTR(options);
+    buddy.SEND_WHITESPACE_TAG = true;
+    buddy.WHITESPACE_START_AKE = true;true
+    console.log('send white space tage check: ', buddy.SEND_WHITESPACE_TAG);
     buddy.on('ui', function (msg, encrypted, meta) {
       console.log("message to display to the user: " + msg)
       // encrypted === true, if the received msg was encrypted
@@ -54,6 +56,7 @@ run_with('id_dsa', function(ks) {
     var buddy = init_buddy(ks);
     run_with('id_dsa_friend', function(ks2) {
         var peer = init_buddy(ks2);
+        buddy.sendMsg('hello');
         console.log(buddy.priv.packPrivate());
         console.log(peer.priv.packPrivate());
         peer.receiveMsg('?OTRv23?');

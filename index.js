@@ -18,7 +18,7 @@ var init_buddy = function(ks) {
     }
     var buddy = new otr.OTR(options);
     buddy.SEND_WHITESPACE_TAG = true;
-    buddy.WHITESPACE_START_AKE = true;true
+    buddy.WHITESPACE_START_AKE = true;
     console.log('send white space tage check: ', buddy.SEND_WHITESPACE_TAG);
     buddy.on('ui', function (msg, encrypted, meta) {
       console.log("message to display to the user: " + msg)

@@ -1,0 +1,22 @@
+{
+  "name": "weobscure",
+  "version": "1.0.0",
+  "description": "node test no mouse",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neutralnetwork/weobscure.git"
+  },
+  "author": "nobody",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/neutralnetwork/weobscure/issues"
+  },
+  "homepage": "https://github.com/neutralnetwork/weobscure",
+  "dependencies": {
+    "otr": "file:otr"
+  }
+}

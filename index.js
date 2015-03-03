@@ -11,9 +11,9 @@ var run_with = function(file, cb) {
 var init_buddy = function(ks) {
     var key = otr.DSA.parsePrivate(ks);
     var options = {
-        fragment_size: 140
+        fragment_size: 2000
       , send_interval: 200
-      , SEND_WHITESPACE_TAG: true
+      //, SEND_WHITESPACE_TAG: true
       , debug: true
       , priv: key
     }
@@ -52,5 +52,11 @@ var init_buddy = function(ks) {
 
 run_with('id_dsa', function(ks) {
     var buddy = init_buddy(ks);
-
+    run_with('id_dsa_friend', function(ks2) {
+        var peer = init_buddy(ks2);
+        console.log(buddy.priv.packPrivate());
+        console.log(peer.priv.packPrivate());
+        peer.receiveMsg('?OTRv23?');
+        
+    });
 });

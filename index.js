@@ -20,6 +20,7 @@ var init_buddy = function(ks) {
     buddy.SEND_WHITESPACE_TAG = true;
     buddy.WHITESPACE_START_AKE = true;
     console.log('send white space tage check: ', buddy.SEND_WHITESPACE_TAG);
+    console.log('start with whitespace check:', buddy.WHITESPACE_START_AKE);
     buddy.on('ui', function (msg, encrypted, meta) {
       console.log("message to display to the user: " + msg)
       // encrypted === true, if the received msg was encrypted
@@ -27,7 +28,8 @@ var init_buddy = function(ks) {
     })
 
     buddy.on('io', function (msg, meta) {
-      console.log("message to send to buddy: " + msg)
+      console.log("message to send to buddy: " + msg);
+      console.log("meesage length " + msg.length);
       console.log("(optional) with sendMsg attached meta data: " + meta)
     })
 
@@ -56,10 +58,19 @@ run_with('id_dsa', function(ks) {
     var buddy = init_buddy(ks);
     run_with('id_dsa_friend', function(ks2) {
         var peer = init_buddy(ks2);
+        buddy.SEND_WHITESPACE_TAG = true;
+        peer.WHITESPACE_START_AKE = true;
         buddy.sendMsg('hello');
         console.log(buddy.priv.packPrivate());
         console.log(peer.priv.packPrivate());
-        peer.receiveMsg('?OTRv23?');
+        var message = ('hello' 
+                + otr.OTR.CONST.WHITESPACE_TAG
+                + otr.OTR.CONST.WHITESPACE_TAG_V3);
+        console.log('message to be received is %s and length is %s', 
+                message,
+                message.length);
+        peer.receiveMsg(message);
+        //peer.receiveMsg('?OTRv23?');
         
     });
 });

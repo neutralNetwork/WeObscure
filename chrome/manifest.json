@@ -8,7 +8,11 @@
       "all_frames" : false,
       "matches": ["https://*.wechat.com/*"],
       "css": [],
-      "js": ["content.js"],
+      "js": ["otr/build/dep/bigint.js",
+           "otr/build/dep/crypto.js",
+           "otr/build/dep/eventemitter.js",
+           "otr/build/otr.min.js",
+           "content.js"],
       "run_at": "document_end"
     }
   ],

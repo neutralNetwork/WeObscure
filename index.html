@@ -42,10 +42,10 @@ textarea {
 <script>
 
 var key = (function(){
-	var keyString = sessionStorage.privateKey;
+	var keyString = localStorage.privateKey;
 	if (keyString) { return DSA.parsePrivate(keyString); }
 	var key = new DSA;
-	sessionStorage.privateKey = key.packPrivate();
+	localStorage.privateKey = key.packPrivate();
 	return key;
 })();
 

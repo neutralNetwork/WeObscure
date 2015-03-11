@@ -1,12 +1,17 @@
 (function() {
     function patch_function(orig, patch) {
         return function() {
+            var ret = orig.apply(this, arguments);
             patch.apply(this, arguments);
-            return orig.apply(this, arguments);
+            return ret;
         };
     };
     (new Promise(function(res, rej){
-        var chat = WebMM.getCtrlInstants('chat');
+        function getChat() {
+            return WebMM.getCtrlInstants('chat');
+        }
+
+        var chat = getChat();
         if (chat) {
             res(chat);
             return;
@@ -15,7 +20,8 @@
         // WebMM obj
         window.ready = patch_function(window.ready, function(component) {
             if (component === 'view') {
-                res(chat);
+                console.log('PATCH FIRED');
+                res(getChat());
             }
         });
     })).then(function(chat) {

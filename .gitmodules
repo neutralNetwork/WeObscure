@@ -1,3 +1,6 @@
-[submodule "otr"]
-	path = otr
-	url = git://github.com/arlolra/otr.git
+[submodule "otr_test/otr"]
+	path = otr_test/otr
+	url = git@github.com:arlolra/otr.git
+[submodule "chrome/otr"]
+	path = chrome/otr
+	url = git@github.com:arlolra/otr.git

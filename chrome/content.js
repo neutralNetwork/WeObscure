@@ -4,9 +4,10 @@
 
 	document.addEventListener('wesecure_message', function(e){
         var message = e.detail;
-        if (message && (message.Content !== "")) {
-            console.log(message);
-        }
+        console.log(message);
+        //if (message.MsgType === 1) {
+            //do something
+        //}
 	});
 
 	document.body.appendChild(el);

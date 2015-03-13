@@ -26,12 +26,18 @@
         });
     })).then(function(chat) {
         chat.messageAdded = patch_function(chat.messageAdded, function(message){
-            if (message) {
-                console.log(message);
-                document.dispatchEvent(new CustomEvent('wesecure_message', {
-                    detail: message
-                }));
+            var msg = {};
+            for (attr in message) {
+                if (message.hasOwnProperty(attr)) {
+                    msg[attr] = message[attr];
+                }
             }
+            console.log("copied_msg", msg);
+            msg.update = null;
+            msg.isSysMessage = null;
+            document.dispatchEvent(
+                new CustomEvent('wesecure_message', { detail: msg })
+            );
         });
     });
 })();

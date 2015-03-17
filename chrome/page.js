@@ -10,9 +10,16 @@
         function getChat() {
             return WebMM.getCtrlInstants('chat');
         }
+        function page_ready() {
+            console.log("sending page ready");
+            document.dispatchEvent(
+                    new CustomEvent('page_ready', {})
+            );
+        };
 
         var chat = getChat();
         if (chat) {
+            page_ready()
             res(chat);
             return;
         };
@@ -20,7 +27,7 @@
         // WebMM obj
         window.ready = patch_function(window.ready, function(component) {
             if (component === 'view') {
-                console.log('PATCH FIRED');
+                page_ready();
                 res(getChat());
             }
         });
@@ -32,7 +39,6 @@
                     msg[attr] = message[attr];
                 }
             }
-            console.log("copied_msg", msg);
             msg.update = null;
             msg.isSysMessage = null;
             document.dispatchEvent(

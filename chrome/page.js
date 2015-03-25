@@ -97,7 +97,8 @@
                 FromUserName: message.from,
                 Content: message.content,
                 MsgType: 3,
-                MsgId: jQuery.now()
+                MsgId: jQuery.now(),
+                Status: 3
             }]);
         });
     });

@@ -96,7 +96,8 @@
             origAddMessages.call(messageModel, [{
                 FromUserName: message.from,
                 Content: message.content,
-                MsgType: 3
+                MsgType: 3,
+                MsgId: jQuery.now()
             }]);
         });
     });

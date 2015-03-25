@@ -1,4 +1,14 @@
 (function (init) {
+
+    function dispatchEvent(name, data) {
+        var e = new CustomEvent('wesecure_' + name, {
+            cancelable: true,
+            detail: data
+        })
+        document.dispatchEvent(e);
+        return e;
+    }
+
 	var el = document.createElement('script');
 	el.src = chrome.extension.getURL('page.js');
 
@@ -11,14 +21,24 @@
         return privateKey;
     };
 
-    var init_buddy = function(key) {
+    var buddies = {}
+
+    function getBuddy(name) {
+        if (name in buddies) { return buddies[name]; }
+
         var options = {
             fragment_size: 2000
           , send_interval: 200
           , debug: true
-          , priv: key
+          , priv: get_key()
         }
         var buddy = new OTR(options);
+
+        buddy.SEND_WHITESPACE_TAG = true;
+        buddy.WHITESPACE_START_AKE = true;
+
+        buddies[name] = buddy;
+
         buddy.on('ui', function (msg, encrypted, meta) {
           console.log("message to display to the user: " + msg)
           // encrypted === true, if the received msg was encrypted
@@ -28,7 +48,8 @@
         buddy.on('io', function (msg, meta) {
           console.log("message to send to buddy: " + msg);
           console.log("meesage length " + msg.length);
-          console.log("(optional) with sendMsg attached meta data: " + meta)
+          console.log("(optional) with sendMsg attached meta data: " + meta);
+          dispatchEvent('send_message', { to: name, content: msg });
         })
 
         buddy.on('status', function (state) {
@@ -54,19 +75,19 @@
 
     document.addEventListener('page_ready', function(){
         console.log("receive page ready event");
-        var privKey = get_key();
-        me_irl = init_buddy(privKey);
     });
 
-	document.addEventListener('wesecure_message', function(e){
+    document.addEventListener('wesecure_incoming_message', function(e){
         var message = e.detail;
-        if (message.MsgType === 1) {
-            console.log(message.Content, message.Status);
-            if (message.Status === 1) {
-                me_irl.sendQueryMsg();
-            }
-        }
-	});
+        getBuddy(message.from).receiveMsg(message.content);
+        e.preventDefault();
+    });
 
-	document.body.appendChild(el);
+    document.addEventListener('wesecure_outgoing_message', function(e){
+        var message = e.detail;
+        getBuddy(message.to).sendMsg(message.content);
+        e.preventDefault();
+    });
+
+    document.body.appendChild(el);
 })();

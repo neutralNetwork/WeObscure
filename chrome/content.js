@@ -43,6 +43,7 @@
           console.log("message to display to the user: " + msg)
           // encrypted === true, if the received msg was encrypted
           console.log("(optional) with receiveMsg attached meta data: " + meta)
+          dispatchEvent('receive_message', { from: name, content: msg });
         })
 
         buddy.on('io', function (msg, meta) {

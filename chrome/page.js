@@ -90,5 +90,14 @@
                 CreateTime: Math.floor(WebMM.util.getServerTime() / 1E3)
             }));
         });
+
+        document.addEventListener('wesecure_receive_message', function(e){
+            var message = e.detail;
+            origAddMessages.call(messageModel, [{
+                FromUserName: message.from,
+                Content: message.content,
+                MsgType: 3
+            }]);
+        });
     });
 })();

@@ -49,7 +49,7 @@
             var msgsToForward = [];
             msgs.forEach(function(msg) {
                 if (msg.MsgType !== 1 || msg.Status !== 3) {
-                    if (!msg.otr) {
+                    if (!msg.wesecure_encrypted) {
                         msgsToForward.push(msg);
                     }
                     return;
@@ -67,9 +67,8 @@
         };
 
         sendLogic._postText = function(one, two, msg) {
-            if (msg.otr) { return; }
             console.log("sending message:", msg);
-            if (!dispatchEvent('outgoing_message', {
+            if (msg.wesecure_encrypted || !dispatchEvent('outgoing_message', {
                 to: msg.ToUserName,
                 content: msg.Content
             }).defaultPrevented) {
@@ -84,7 +83,7 @@
                 ToUserName: message.to,
                 Type: 1,
                 Content: message.content,
-                otr: true,
+                wesecure_encrypted: true,
             } });
             base.Msg.LocalID = base.Msg.ClientMsgId = jQuery.now()
             WebMM.logic('sendMsg').sendText(jQuery.extend({}, base, {

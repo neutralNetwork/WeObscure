@@ -43,13 +43,15 @@
         var sendLogic = WebMM.logic('sendMsg');
 
         var origAddMessages = messageModel.addMessages;
-        var origSendText = sendLogic.sendText;
+        var origPostMessage = sendLogic._postText;
 
         messageModel.addMessages = function(msgs){
             var msgsToForward = [];
             msgs.forEach(function(msg) {
                 if (msg.MsgType !== 1 || msg.Status !== 3) {
-                    msgsToForward.push(msg);
+                    if (!msg.otr) {
+                        msgsToForward.push(msg);
+                    }
                     return;
                 }
                 if (!dispatchEvent('incoming_message', {
@@ -64,15 +66,15 @@
             }
         };
 
-        sendLogic.sendText = function(msg){
+        sendLogic._postText = function(one, two, msg) {
             console.log("sending message:", msg);
             if (!dispatchEvent('outgoing_message', {
-                to: msg.Msg.ToUserName,
-                content: msg.Msg.Content
+                to: msg.ToUserName,
+                content: msg.Content
             }).defaultPrevented) {
-                return origSendText.apply(this, arguments);
-            }
-        };
+                return origPostMessage.apply(this, arguments);
+            }         
+        }
 
         document.addEventListener('wesecure_send_message', function(e){
             var message = e.detail;
@@ -80,10 +82,11 @@
                 FromUserName: WebMM.model("account").getUserName(),
                 ToUserName: message.to,
                 Type: 1,
-                Content: message.content
+                Content: message.content,
+                otr: true,
             } });
             base.Msg.LocalID = base.Msg.ClientMsgId = jQuery.now()
-            origSendText.call(sendLogic, jQuery.extend({}, base, {
+            WebMM.logic('sendMsg').sendText(jQuery.extend({}, base, {
                 MsgId: jQuery.now(),
                 MsgType: 1,
                 Status: 1,
@@ -98,7 +101,8 @@
                 Content: message.content,
                 MsgType: 1,
                 MsgId: jQuery.now(),
-                Status: 3
+                Status: 3,
+                CreateTime: Math.floor(WebMM.util.getServerTime() / 1E3)
             }]);
         });
     });

@@ -12,7 +12,6 @@
 	var el = document.createElement('script');
 	el.src = chrome.extension.getURL('page.js');
 
-    var me_irl;
     var get_key = function(){
         var keyString = localStorage.privateKey;
         if (keyString) { return DSA.parsePrivate(keyString); }

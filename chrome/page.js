@@ -43,7 +43,7 @@
         var sendLogic = WebMM.logic('sendMsg');
 
         var origAddMessages = messageModel.addMessages;
-        var origPostMessage = sendLogic._postText;
+        var origPostText = sendLogic._postText;
 
         messageModel.addMessages = function(msgs){
             var msgsToForward = [];
@@ -68,11 +68,11 @@
 
         sendLogic._postText = function(one, two, msg) {
             console.log("sending message:", msg);
-            if (!dispatchEvent('outgoing_message', {
+            if (!msg.otr || !dispatchEvent('outgoing_message', {
                 to: msg.ToUserName,
                 content: msg.Content
             }).defaultPrevented) {
-                return origPostMessage.apply(this, arguments);
+                return origPostText.apply(this, arguments);
             }         
         }
 

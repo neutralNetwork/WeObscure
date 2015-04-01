@@ -67,8 +67,9 @@
         };
 
         sendLogic._postText = function(one, two, msg) {
+            if (msg.otr) { return; }
             console.log("sending message:", msg);
-            if (!msg.otr || !dispatchEvent('outgoing_message', {
+            if (!dispatchEvent('outgoing_message', {
                 to: msg.ToUserName,
                 content: msg.Content
             }).defaultPrevented) {
